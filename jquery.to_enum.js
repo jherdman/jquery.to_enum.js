@@ -1,6 +1,7 @@
 /**
  * @author James F. Herdman (james.herdman@me.com)
  * @license MIT License
+ * @requires ~> jQuery 1.4.3 (may work with less)
  */
 (function ($) {
   /**
@@ -9,21 +10,21 @@
    * first item in the collection.
    */
   $.fn.toEnum = function () {
-    var $elems = this
-      , curr   = 0;
+    var $this = this
+      , curr  = 0;
 
     function adjIdx (idx) {
-      if (idx >= $elems.length) {
+      if (idx >= $this.length) {
         return 0;
       } else if (idx < 0) {
-        return $elems.length - 1;
+        return $this.length - 1;
       } else {
         return idx;
       }
     }
 
     function get (idx) {
-      return $($elems[adjIdx(idx)]);
+      return $($this[adjIdx(idx)]);
     }
 
     return {
