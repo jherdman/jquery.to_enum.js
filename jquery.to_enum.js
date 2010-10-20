@@ -13,32 +13,71 @@
     var $this = this
       , curr  = 0;
 
-    function get (idx) {
-      var e = $this.eq(idx);
-
-      if (typeof e == 'undefined') {
-        idx = (idx > $this.length ? 0 : $this.length - 1);
-        e   = $this.eq(idx);
+    function adjIdx (idx) {
+      if (idx >= $this.length) {
+        return 0;
+      } else if (idx < 0) {
+        return $this.length - 1;
+      } else {
+        return idx;
       }
+    }
 
-      return e;
+    function peek (idx) {
+      return $this.eq(adjIdx(idx));
+    }
+
+    function advance (idx) {
+      curr = adjIdx(idx);
+      return peek(curr);
     }
 
     return {
-        // @return {jQuery} current jQuery object in focus by the enumerator
-        current  : function () { return get(curr); }
+        /**
+         * @return {jQuery} the current item in the jQuery collection
+         */
+        current : function () { return peek(curr); }
 
-        // @return {jQuery} the next jQuery object, but don't advance enumerator
-      , next     : function () { return get(curr + 1); }
+        /**
+         * @return {jQuery} peeks at the next item in the jQuery collection
+         */
+      , next : function () { return peek(curr + 1); }
 
-        // @return {jQuery} the previous jQuery object, but don't rewind the enumerator
-      , previous : function () { return get(curr - 1); }
+        /**
+         * @return {jQuery} peeks at the previous item in the jQuery collection
+         */
+      , prev : function () { return peek(curr - 1); }
 
-        // @return {jQuery} move the enumerator forward one element, and return the new element
-      , advance  : function () { curr += 1; return this.current(); }
+        /**
+         * @return {jQuery} advances and returns the next item in the jQuery collection.
+         */
+      , advance : function () { return advance(curr + 1); }
 
-        // @return {jQuery} move the enumerator back one element, and return the new element
-      , rewind   : function () { curr -= 1; return this.current(); }
+        /**
+         * Iterates through the collection, yielding it with each iteration
+         * with the current item advanced.
+         *
+         * @param {Function} a function to call on each item in the jQuery
+         *   collection. This function will be provided the enumerator. It
+         *   must return either true or false.
+         * 
+         * @param {Integer} the number of milliseconds to delay between
+         *   iterations. Defaults to 0.
+         */
+      , each : function (method, delay) {
+                 var intCtl
+                   , enum = this;
+
+                 delay = delay || 0;
+
+                 intCtrl = setInterval(function () {
+                   if (!method(enum.current())) {
+                     clearInterval(intCtrl);
+                   }
+
+                   enum.advance();
+                 }, delay);
+               }
     };
   };
 })(jQuery);
