@@ -13,18 +13,15 @@
     var $this = this
       , curr  = 0;
 
-    function adjIdx (idx) {
-      if (idx >= $this.length) {
-        return 0;
-      } else if (idx < 0) {
-        return $this.length - 1;
-      } else {
-        return idx;
-      }
-    }
-
     function get (idx) {
-      return $($this[adjIdx(idx)]);
+      var e = $this.eq(idx);
+
+      if (typeof e == 'undefined') {
+        idx = (idx > $this.length ? 0 : $this.length - 1);
+        e   = $this.eq(idx);
+      }
+
+      return e;
     }
 
     return {
@@ -38,10 +35,10 @@
       , previous : function () { return get(curr - 1); }
 
         // @return {jQuery} move the enumerator forward one element, and return the new element
-      , advance  : function () { curr = adjIdx(curr + 1); return this.current(); }
+      , advance  : function () { curr += 1; return this.current(); }
 
         // @return {jQuery} move the enumerator back one element, and return the new element
-      , rewind   : function () { curr = adjIdx(curr - 1); return this.current(); }
+      , rewind   : function () { curr -= 1; return this.current(); }
     };
   };
 })(jQuery);
